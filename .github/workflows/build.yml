@@ -36,8 +36,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_flavor: [main, nvidia, asus, asus-nvidia, framework, surface, surface-nvidia]
-        base_name: [bluefin, bluefin-dx]
+        # image_flavor: [main, nvidia, asus, asus-nvidia, framework, surface, surface-nvidia]
+        image_flavor: [main]
+        # base_name: [bluefin, bluefin-dx]
+        base_name: [bluefin-dx]
         major_version: [38, 39]
         include:
           - major_version: 38

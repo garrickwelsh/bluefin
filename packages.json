@@ -105,7 +105,9 @@
 				"qemu",
 				"ubuntu-family-fonts",
 				"virt-manager",
-				"virt-viewer"
+				"virt-viewer",
+				"helix",
+				"broadcom-wl"
 			]
 		},
 		"exclude": {
