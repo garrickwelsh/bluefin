@@ -170,9 +170,6 @@ RUN wget https://copr.fedorainfracloud.org/coprs/ganto/lxc4/repo/fedora-"${FEDOR
     wget https://copr.fedorainfracloud.org/coprs/karmab/kcli/repo/fedora-"${FEDORA_MAJOR_VERSION}"/karmab-kcli-fedora-"${FEDORA_MAJOR_VERSION}".repo -O /etc/yum.repos.d/karmab-kcli-fedora-"${FEDORA_MAJOR_VERSION}".repo && \
     wget https://copr.fedorainfracloud.org/coprs/atim/ubuntu-fonts/repo/fedora-"${FEDORA_MAJOR_VERSION}"/atim-ubuntu-fonts-fedora-"${FEDORA_MAJOR_VERSION}".repo -O /etc/yum.repos.d/atim-ubuntu-fonts-fedora-"${FEDORA_MAJOR_VERSION}".repo
 
-# Broadcom drivers
-RUN rpm-ostree install rpmfusion-nonfree-release-tainted
-
 # Handle packages via packages.json
 RUN /tmp/build.sh && \
     /tmp/image-info.sh
@@ -219,3 +216,18 @@ RUN rm -f /etc/yum.repos.d/ublue-os-staging-fedora-"${FEDORA_MAJOR_VERSION}".rep
     fc-cache --system-only --really-force --verbose && \
     rm -rf /tmp/* /var/* && \
     ostree container commit
+
+
+
+FROM bluefin-dx AS bluefin-dx-broadcom
+ARG IMAGE_NAME="${IMAGE_NAME}"
+ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
+ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME}"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
+ARG PACKAGE_LIST="bluefin-dx-broadcom"
+# Broadcom drivers
+RUN rpm-ostree install rpmfusion-nonfree-release-tainted && \
+    rpm-ostree install broadcom-wl && \
+    ostree container commit
+

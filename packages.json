@@ -107,8 +107,7 @@
 				"udica",
 				"virt-manager",
 				"virt-viewer",
-				"helix",
-				"broadcom-wl"
+				"helix"
 			]
 		},
 		"exclude": {
