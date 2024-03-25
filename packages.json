@@ -65,7 +65,7 @@
 				"code",
 				"containerd.io",
 				"dbus-x11",
-                                "devpod",
+				"devpod",
 				"distrobuilder",
 				"docker-ce",
 				"docker-ce-cli",
@@ -108,6 +108,76 @@
 				"virt-manager",
 				"virt-viewer",
 				"helix"
+			],
+			"bluefin-dx-hyprland" : [
+				"hyprland",
+				"waybar",
+				"xdg-desktop-portal-hyprland",
+				"brightnessctl",
+
+				"rofi-wayland",
+
+				"xorg-x11-server-Xwayland",
+				"polkit",
+				"lxpolkit",
+				"xdg-user-dirs",
+				"dbus-tools",
+				"dbus-daemon",
+				"wl-clipboard",
+				"gnome-keyring",
+				"pavucontrol",
+				"playerctl",
+				"qt5-qtwayland",
+				"qt6-qtwayland",
+				"vulkan-validation-layers",
+				"vulkan-tools",
+				"google-noto-emoji-fonts",
+				"gnome-disk-utility",
+  
+				"wireplumber",
+				"pipewire",
+				"pamixer",
+
+				"network-manager-applet",
+				"NetworkManager-openvpn",
+				"NetworkManager-openconnect",
+				"bluez",
+				"bluez-tools",
+				"blueman",
+
+				"thunar",
+				"thunar-archive-plugin",
+				"thunar-volman",
+				"xarchiver",
+				"imv",
+				"p7zip",
+				"unrar-free",
+
+				"slurp",
+				"grim",
+
+				"wlr-randr",
+				"wlsunset",
+				"grimshot",
+				"brightnessctl",
+				"swaylock",
+				"swayidle",
+				"kanshi",
+
+				"alacritty",
+				"kitty",
+
+				"dunst",
+
+				"mpv",
+
+				"adwaita-qt5",
+				"fontawesome-fonts-all",
+				"gnome-themes-extra",
+				"gnome-icon-theme",
+				"paper-icon-theme",
+				"breeze-icon-theme",
+				"papirus-icon-theme"
 			]
 		},
 		"exclude": {

@@ -217,8 +217,30 @@ RUN rm -f /etc/yum.repos.d/ublue-os-staging-fedora-"${FEDORA_MAJOR_VERSION}".rep
     rm -rf /tmp/* /var/* && \
     ostree container commit
 
+FROM bluefin-dx AS bluefin-dx-hyprland
+ARG IMAGE_NAME="${IMAGE_NAME}"
+ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
+ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME}"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
+ARG PACKAGE_LIST="bluefin-dx-broadcom"
 
+COPY workarounds.sh \
+     packages.json \
+     build.sh \
+     image-info.sh \
+    /tmp
 
+# Handle packages via packages.json
+RUN /tmp/build.sh && \
+    /tmp/image-info.sh
+
+RUN /tmp/workarounds.sh
+
+RUN rm -rf /tmp/* /var/* && \
+    ostree container commit
+
+    
 FROM bluefin-dx AS bluefin-dx-broadcom
 ARG IMAGE_NAME="${IMAGE_NAME}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
