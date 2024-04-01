@@ -226,7 +226,10 @@
 		"exclude": {
 			"bluefin": [
 				"podman-docker",
-				"gnome-terminal-nautilus"
+				"gnome-terminal-nautilus",
+				"power-profiles-daemon",
+				"tlp",
+				"tlp-rdw"
 			],
 			"bluefin-dx": [],
 			"bluefin-framework": []
