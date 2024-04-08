@@ -73,15 +73,16 @@ COPY workarounds.sh \
      image-info.sh \
     /tmp
 
-# Handle packages via packages.json
-RUN /tmp/build.sh && \
-    /tmp/image-info.sh
+COPY build_files/dx build_files/shared /tmp/build/
+COPY system_files/dx /
+COPY packages.json /tmp/packages.json
 
-RUN /tmp/workarounds.sh
-
-RUN rm -rf /tmp/* /var/* && \
+RUN bash -c ". /tmp/build/build-dx.sh"  && \
+    fc-cache --system-only --really-force --verbose && \
+    rm -rf /tmp/* /var/* && \
+    mkdir -p /var/tmp && \
+    chmod -R 1777 /var/tmp && \
     ostree container commit
-
     
 FROM dx AS dx-broadcom
 ARG IMAGE_NAME="${IMAGE_NAME}"
@@ -93,4 +94,5 @@ ARG PACKAGE_LIST="bluefin-dx-broadcom"
 # Broadcom drivers
 RUN rpm-ostree install rpmfusion-nonfree-release-tainted && \
     rpm-ostree install broadcom-wl && \
+    echo "options b43 qos=0 nohwcrypt=1" >> /etc/modprobe.d/wireless.conf &&
     ostree container commit
