@@ -31,7 +31,8 @@ COPY --from=ghcr.io/ublue-os/bluefin-cli /usr/share/bash-prexec /usr/share/bash-
 COPY --from=ghcr.io/ublue-os/akmods:${AKMODS_FLAVOR}-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
 # Build, cleanup, commit.
-RUN bash -c ". /tmp/build/build-base.sh"  && \
+RUN rpm-ostree cliwrap install-to-root / && \
+    bash -c ". /tmp/build/build-base.sh"  && \
     rm -rf /tmp/* /var/* && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp && \
@@ -57,42 +58,4 @@ RUN bash -c ". /tmp/build/build-dx.sh"  && \
     rm -rf /tmp/* /var/* && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp && \
-    ostree container commit
-
-FROM dx AS dx-hyprland
-ARG IMAGE_NAME="${IMAGE_NAME}"
-ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
-ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME}"
-ARG IMAGE_FLAVOR="${IMAGE_FLAVOR}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
-ARG PACKAGE_LIST="bluefin-dx-hyprland"
-
-COPY workarounds.sh \
-     packages.json \
-     build.sh \
-     image-info.sh \
-    /tmp
-
-COPY build_files/dx build_files/shared /tmp/build/
-COPY system_files/dx /
-COPY packages.json /tmp/packages.json
-
-RUN bash -c ". /tmp/build/build-dx.sh"  && \
-    fc-cache --system-only --really-force --verbose && \
-    rm -rf /tmp/* /var/* && \
-    mkdir -p /var/tmp && \
-    chmod -R 1777 /var/tmp && \
-    ostree container commit
-    
-FROM dx AS dx-broadcom
-ARG IMAGE_NAME="${IMAGE_NAME}"
-ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
-ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME}"
-ARG IMAGE_FLAVOR="${IMAGE_FLAVOR}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
-ARG PACKAGE_LIST="bluefin-dx-broadcom"
-# Broadcom drivers
-RUN rpm-ostree install rpmfusion-nonfree-release-tainted && \
-    rpm-ostree install broadcom-wl && \
-    echo "options b43 qos=0 nohwcrypt=1" >> /etc/modprobe.d/wireless.conf &&
     ostree container commit

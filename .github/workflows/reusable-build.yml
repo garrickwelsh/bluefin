@@ -27,17 +27,15 @@ jobs:
       matrix:
         image_flavor:
           - main
-#          - nvidia
-#          - asus
-#          - asus-nvidia
-#          - framework
-#          - surface
-#          - surface-nvidia
+          - nvidia
+          - asus
+          - asus-nvidia
+          - framework
+          - surface
+          - surface-nvidia
         base_name:
           - ${{ inputs.brand_name }}
           - ${{ inputs.brand_name }}-dx
-          - ${{ inputs.brand_name }}-dx-hyprland
-          - ${{ inputs.brand_name }}-dx-broadcom
         fedora_version:
           - ${{ inputs.fedora_version }}
         exclude:
@@ -68,11 +66,7 @@ jobs:
           elif [[ "${{ matrix.base_name }}" =~ "aurora" ]]; then
               echo "BASE_IMAGE_NAME"="kinoite" >> $GITHUB_ENV
           fi
-          if [[ "${{ matrix.base_name }}" =~ "hyprland" ]]; then
-              echo "TARGET_NAME"="dx-hyprland" >> $GITHUB_ENV
-          elif [[ "${{ matrix.base_name }}" =~ "broadcom" ]]; then
-              echo "TARGET_NAME"="dx-broadcom" >> $GITHUB_ENV
-          elif [[ "${{ matrix.base_name }}" =~ "dx" ]]; then
+          if [[ "${{ matrix.base_name }}" =~ "dx" ]]; then
               echo "TARGET_NAME"="dx" >> $GITHUB_ENV
           else
               echo "TARGET_NAME"="base" >> $GITHUB_ENV
@@ -134,8 +128,8 @@ jobs:
           SHA_SHORT="${GITHUB_SHA::7}"
           COMMIT_TAGS+=("pr-${{ github.event.number }}-${FEDORA_VERSION}")
           COMMIT_TAGS+=("${SHA_SHORT}-${FEDORA_VERSION}")
-          if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-             [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+          if [[ "$IS_LATEST_VERSION" == "true" ]] && \
+             [[ "$IS_STABLE_VERSION" == "true" ]]; then
               COMMIT_TAGS+=("pr-${{ github.event.number }}")
               COMMIT_TAGS+=("${SHA_SHORT}")
           fi
@@ -144,16 +138,16 @@ jobs:
 
           if [[ ${{ github.ref_name }} == "testing" ]]; then
              BUILD_TAGS=("${FEDORA_VERSION}-testing" "${FEDORA_VERSION}-testing-${TIMESTAMP}")
-             if [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-                [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+             if [[ "$IS_LATEST_VERSION" == "true" ]] && \
+                [[ "$IS_STABLE_VERSION" == "true" ]]; then
                  BUILD_TAGS+=("testing")
-             elif [[ "${{ matrix.is_gts_version }}" == "true" ]]; then
+             elif [[ "$IS_GTS_VERSION" == "true" ]]; then
                  BUILD_TAGS+=("gts-testing")
              fi
-          elif [[ "${{ matrix.is_latest_version }}" == "true" ]] && \
-               [[ "${{ matrix.is_stable_version }}" == "true" ]]; then
+          elif [[ "$IS_LATEST_VERSION" == "true" ]] && \
+               [[ "$IS_STABLE_VERSION" == "true" ]]; then
               BUILD_TAGS+=("latest")
-          elif [[ "${{ matrix.is_gts_version }}" == "true" ]]; then
+          elif [[ "$IS_GTS_VERSION" == "true" ]]; then
               BUILD_TAGS+=("gts")
           fi
 
@@ -290,8 +284,11 @@ jobs:
   build_iso:
     name: iso
     needs: [check]
-    if: github.ref_name == 'testing'
+    if: github.ref_name == 'testing' && inputs.fedora_version != '40'
     # Eventually would be nice for building images in PRs
     #if: ${{ endsWith(github.event.pull_request.title, '[ISO]') }}
-    uses: ./.github/workflows/build_iso.yml
+    uses: ./.github/workflows/reusable-build-iso.yml
     secrets: inherit
+    with:
+      brand_name: ${{ inputs.brand_name }}
+      fedora_version: ${{ inputs.fedora_version }}
