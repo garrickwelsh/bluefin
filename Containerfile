@@ -59,3 +59,26 @@ RUN bash -c ". /tmp/build/build-dx.sh"  && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp && \
     ostree container commit
+
+## bluefin-dx developer edition image section
+FROM base AS hyprland-dx
+
+ARG IMAGE_NAME="${IMAGE_NAME}"
+ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
+ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME}"
+ARG IMAGE_FLAVOR="${IMAGE_FLAVOR}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
+
+# dx specific files come from the dx directory in this repo
+COPY build_files/dx build_files/shared /tmp/build/
+COPY system_files/dx /
+COPY packages.json /tmp/packages.json
+
+# Build, Clean-up, Commit
+RUN bash -c ". /tmp/build/build-dx.sh"  && \
+    fc-cache --system-only --really-force --verbose && \
+    rm -rf /tmp/* /var/* && \
+    mkdir -p /var/tmp && \
+    chmod -R 1777 /var/tmp && \
+    ostree container commit
+
