@@ -3,7 +3,7 @@ ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG AKMODS_FLAVOR="${AKMODS_FLAVOR:-main}"
 ARG SOURCE_IMAGE="${SOURCE_IMAGE:-$BASE_IMAGE_NAME-$IMAGE_FLAVOR}"
 ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-39}"
+ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
 ARG TARGET_BASE="${TARGET_BASE:-bluefin}"
 
 ## bluefin image section
@@ -45,12 +45,16 @@ ARG IMAGE_NAME="${IMAGE_NAME}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR}"
+ARG AKMODS_FLAVOR="${AKMODS_FLAVOR}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION}"
 
 # dx specific files come from the dx directory in this repo
 COPY build_files/dx build_files/shared /tmp/build/
 COPY system_files/dx /
 COPY packages.json /tmp/packages.json
+
+# Copy akmods-extra from ublue
+COPY --from=ghcr.io/ublue-os/akmods-extra:${AKMODS_FLAVOR}-${FEDORA_MAJOR_VERSION} /rpms /tmp/akmods-rpms
 
 # Build, Clean-up, Commit
 RUN bash -c ". /tmp/build/build-dx.sh"  && \
@@ -81,4 +85,3 @@ RUN bash -c ". /tmp/build/build-dx.sh"  && \
     mkdir -p /var/tmp && \
     chmod -R 1777 /var/tmp && \
     ostree container commit
-
