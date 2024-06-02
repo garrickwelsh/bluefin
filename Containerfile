@@ -6,11 +6,10 @@ ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-40}"
 ARG TARGET_BASE="${TARGET_BASE:-bluefin}"
 
-# KMODs
+# FROM's for copying
 ARG KMOD_SOURCE_COMMON="ghcr.io/ublue-os/akmods:${AKMODS_FLAVOR}-${FEDORA_MAJOR_VERSION}"
-ARG KMOD_SOURCE_EXTRA="ghcr.io/ublue-os/akmods-extra:${AKMODS_FLAVOR}-${FEDORA_MAJOR_VERSION}"
-FROM ${KMOD_SOURCE_COMMON} as akmod-common
-FROM ${KMOD_SOURCE_EXTRA} as akmod-extra
+FROM ${KMOD_SOURCE_COMMON} as akmods
+FROM ghcr.io/ublue-os/bluefin-cli as bluefin-cli
 
 ## bluefin image section
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS base
@@ -31,10 +30,10 @@ COPY packages.json /tmp/packages.json
 # Copy ublue-update.toml to tmp first, to avoid being overwritten.
 COPY /system_files/shared/usr/etc/ublue-update/ublue-update.toml /tmp/ublue-update.toml
 # Copy Bluefin CLI packages
-COPY --from=ghcr.io/ublue-os/bluefin-cli /usr/bin/atuin /usr/bin/atuin
-COPY --from=ghcr.io/ublue-os/bluefin-cli /usr/share/bash-prexec /usr/share/bash-prexec
+COPY --from=bluefin-cli /usr/bin/atuin /usr/bin/atuin
+COPY --from=bluefin-cli /usr/share/bash-prexec /usr/share/bash-prexec
 # COPY ublue kmods, add needed negativo17 repo and then immediately disable due to incompatibility with RPMFusion
-COPY --from=akmod-common /rpms /tmp/akmods-rpms
+COPY --from=akmods /rpms /tmp/akmods-rpms
 
 # Build, cleanup, commit.
 RUN rpm-ostree cliwrap install-to-root / && \
@@ -67,7 +66,7 @@ COPY system_files/dx /
 COPY packages.json /tmp/packages.json
 
 # Copy akmods-extra from ublue
-COPY --from=akmod-extra /rpms /tmp/akmods-rpms
+COPY --from=akmods /rpms /tmp/akmods-rpms
 
 # Build, Clean-up, Commit
 RUN bash -c ". /tmp/build/build-dx.sh"  && \
