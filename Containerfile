@@ -9,7 +9,7 @@ ARG TARGET_BASE="${TARGET_BASE:-bluefin}"
 # FROM's for copying
 ARG KMOD_SOURCE_COMMON="ghcr.io/ublue-os/akmods:${AKMODS_FLAVOR}-${FEDORA_MAJOR_VERSION}"
 FROM ${KMOD_SOURCE_COMMON} as akmods
-FROM ghcr.io/ublue-os/bluefin-cli as bluefin-cli
+FROM ghcr.io/ublue-os/bluefin-cli@sha256:09f092c19e7c1e6c965e88f17005c20c5298eeece3f644e259616adddb99462c as bluefin-cli
 
 ## bluefin image section
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS base
@@ -37,13 +37,6 @@ COPY --from=akmods /rpms /tmp/akmods-rpms
 
 # Build, cleanup, commit.
 RUN rpm-ostree cliwrap install-to-root / && \
-    mkdir -p /tmp/mediatek-firmware && \
-    curl -Lo /tmp/mediatek-firmware/WIFI_MT7922_patch_mcu_1_1_hdr.bin https://gitlab.com/kernel-firmware/linux-firmware/-/raw/8f08053b2a7474e210b03dbc2b4ba59afbe98802/mediatek/WIFI_MT7922_patch_mcu_1_1_hdr.bin?inline=false && \
-    curl -Lo /tmp/mediatek-firmware/WIFI_RAM_CODE_MT7922_1.bin https://gitlab.com/kernel-firmware/linux-firmware/-/raw/8f08053b2a7474e210b03dbc2b4ba59afbe98802/mediatek/WIFI_RAM_CODE_MT7922_1.bin?inline=false && \
-    xz --check=crc32 /tmp/mediatek-firmware/WIFI_MT7922_patch_mcu_1_1_hdr.bin && \
-    xz --check=crc32 /tmp/mediatek-firmware/WIFI_RAM_CODE_MT7922_1.bin && \
-    mv -vf /tmp/mediatek-firmware/* /usr/lib/firmware/mediatek/ && \
-    rm -rf /tmp/mediatek-firmware && \
     bash -c ". /tmp/build/build-base.sh"  && \
     rm -rf /tmp/* /var/* && \
     mkdir -p /var/tmp && \
