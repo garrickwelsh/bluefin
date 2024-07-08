@@ -33,15 +33,14 @@ jobs:
       matrix:
         image_flavor:
           - main
-          # - nvidia
-          # - asus
-          # - asus-nvidia
-          # - surface
-          # - surface-nvidia
+          - nvidia
+          - asus
+          - asus-nvidia
+          - surface
+          - surface-nvidia
         base_name:
           - ${{ inputs.brand_name }}
           - ${{ inputs.brand_name }}-dx
-          - ${{ inputs.brand_name }}-hyprland-dx
         fedora_version:
           - ${{ inputs.fedora_version }}
         exclude:
@@ -87,9 +86,7 @@ jobs:
           fi
 
           # TARGET_NAME
-          if [[ "${{ matrix.base_name }}" =~ "hyprland-dx" ]]; then
-              echo "TARGET_NAME"="hyprland-dx" >> $GITHUB_ENV
-          elif [[ "${{ matrix.base_name }}" =~ "dx" ]]; then
+          if [[ "${{ matrix.base_name }}" =~ "dx" ]]; then
               echo "TARGET_NAME"="dx" >> $GITHUB_ENV
           else
               echo "TARGET_NAME"="base" >> $GITHUB_ENV
