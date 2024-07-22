@@ -26,6 +26,7 @@
 				"make",
 				"mesa-libGLU",
 				"nerd-fonts",
+				"opendyslexic-fonts",
 				"playerctl",
 				"printer-driver-brlaser",
 				"pulseaudio-utils",
@@ -168,15 +169,15 @@
 		},
 		"exclude": {
 			"all": [],
-			"silverblue": [
-				
-			],
+			"silverblue": [],
 			"dx": []
 		}
 	},
 	"40": {
 		"include": {
-			"all": [],
+			"all": [
+				"ptyxis"
+			],
 			"silverblue": [],
 			"dx": []
 		},
